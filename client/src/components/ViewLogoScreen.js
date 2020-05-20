@@ -3,14 +3,19 @@ import { Link } from 'react-router-dom';
 import '../App.css';
 import gql from 'graphql-tag';
 import { Query, Mutation } from 'react-apollo';
+import {Rnd} from 'react-rnd';
 
 const GET_LOGO = gql`
     query logo($logoId: String) {
         logo(id: $logoId) {
             _id
-            text
-            color
-            fontSize
+            texts {
+                text
+                x
+                y
+                color
+                fontSize
+            }
             backgroundColor
             borderColor
             borderWidth
@@ -34,6 +39,32 @@ const DELETE_LOGO = gql`
 
 class ViewLogoScreen extends Component {
 
+    renderTextLinks = (text, index) => {
+        console.log(text);
+        return (
+        <Rnd key={index} enableResizing="Disable" disableDragging="True"
+            style={{fontSize: text.fontSize + "pt", color: text.color}}
+            position={{x: text.x, y: text.y}}>{text ? text.text : ":("}</Rnd>
+        )
+    }
+ 
+    renderWorkspace = (data) => {
+        return (
+            <div className="col-6">
+                <span style={{
+                    display: "inline-block",
+                    backgroundColor: data.logo.backgroundColor,
+                    borderColor: data.logo.borderColor,
+                    borderStyle: "solid",
+                    borderWidth: data.logo.borderWidth + "pt",
+                    borderRadius: data.logo.borderRadius + "pt",
+                    padding: data.logo.padding + "pt",
+                    margin: data.logo.margin + "pt"
+                }}>{data.logo.texts ? data.logo.texts.map(this.renderTextLinks): ""}</span>
+            </div>
+        )
+    }
+
     render() {
         return (
             <Query pollInterval={500} query={GET_LOGO} variables={{ logoId: this.props.match.params.id }}>
@@ -53,16 +84,10 @@ class ViewLogoScreen extends Component {
                                 <div className="panel-body row">
                                     <div className="col-6">
                                         <dl>
-                                            <dt>Text:</dt>
-                                            <dd>{data.logo.text}</dd>
-                                            <dt>Color:</dt>
-                                            <dd>{data.logo.color}</dd>
                                             <dt>BackgroundColor:</dt>
                                             <dd>{data.logo.backgroundColor}</dd>
                                             <dt>BorderColor:</dt>
                                             <dd>{data.logo.borderColor}</dd>
-                                            <dt>Font Size:</dt>
-                                            <dd>{data.logo.fontSize}</dd>
                                             <dt>Border Width:</dt>
                                             <dd>{data.logo.borderWidth}</dd>
                                             <dt>Border Radius:</dt>
@@ -95,20 +120,7 @@ class ViewLogoScreen extends Component {
                                         )}
                                     </Mutation>
                                     </div>
-                                    <div className="col-6">
-                                        <span style={{
-                                            display: "inline-block",
-                                            color: data.logo.color,
-                                            backgroundColor: data.logo.backgroundColor,
-                                            borderColor: data.logo.borderColor,
-                                            borderStyle: "solid",
-                                            fontSize: data.logo.fontSize + "pt",
-                                            borderWidth: data.logo.borderWidth + "px",
-                                            borderRadius: data.logo.borderRadius + "px",
-                                            padding: data.logo.padding + "px",
-                                            margin: data.logo.margin + "px"
-                                        }}>{data.logo.text}</span>
-                                    </div>
+                                    {this.renderWorkspace(data)}
                                 </div>
                             </div>
                         </div>

@@ -1,0 +1,60 @@
+Adding New Logo
+
+mutation {
+  addLogo(text: ["test"], color: "black", backgroundColor: "black", 
+    borderColor: "black", fontSize: 12, borderWidth: 13, borderRadius: 3, 
+    padding: 13, margin: 10, imageURL: "https://media.giphy.com/media/3osBLA53AVzn746dXi/giphy.gif") {
+    text
+  }
+}
+
+
+Deleting a Logo
+
+mutation {
+  removeLogo(id: "5e8e7f242c3d9614d53807c3") {
+    _id
+    text
+  }
+}
+
+
+Updating a Logo
+
+mutation {
+  updateLogo(id: "5e9110230ffbfc26be3da7c9", text: ["test2", "test3", "test4"], color: "black",
+  backgroundColor: "black", borderColor: "black", borderWidth: 3, borderRadius: 3,
+  margin: 10, padding: 12, fontSize: 3, imageURL: "https://media.giphy.com/media/3osBLA53AVzn746dXi/giphy.gif") {
+    text
+  }
+}
+
+Querying for All Logos
+
+{
+  logos {
+    _id
+    text
+    color
+    fontSize
+    backgroundColor
+    borderColor
+    borderWidth
+    borderRadius
+    padding
+    margin
+    imageURL
+    text
+    lastUpdate
+  }
+}
+
+Querying for Specific Logo
+
+{
+  logo(id: "5e9110230ffbfc26be3da7c9") {
+    text
+    fontSize
+    color
+  }
+}

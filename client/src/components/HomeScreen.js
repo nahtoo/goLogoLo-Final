@@ -8,7 +8,9 @@ const GET_LOGOS = gql`
   {
     logos {
       _id
-      text
+      texts {
+          text
+      }
       lastUpdate
     }
   }
@@ -40,14 +42,13 @@ class HomeScreen extends Component {
                                 <h3>Recent Work</h3>
                                 {data.logos.sort((x, y) => -compareDates(x.lastUpdate, y.lastUpdate)).map((logo, index) => (
                                     <div key={index} className='home_logo_link'>
-                                        <Link to={`/view/${logo._id}`} className="home_logo_link_text" style={{ cursor: "pointer" }}>{logo.text}</Link>
+                                        <Link to={`/view/${logo._id}`} className="home_logo_link_text" style={{ cursor: "pointer" }}>{logo.texts.map((text) => (text.text + " "))}</Link>
                                     </div>
                                 ))}
                             </div>
                             <div className="col s8">
                                 <div id="home_banner_container">
-                                    @todo<br />
-                                    List Maker
+                                    goLogoLo
                                 </div>
                                 <div>
                                     <Link id="add_logo_button" to="/create" className ={"btn btn-secondary btn-block"}>Add Logo</Link>
