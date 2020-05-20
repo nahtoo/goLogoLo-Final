@@ -220,14 +220,22 @@ class EditLogoScreen extends Component {
     }
 
     handleAddImage = (event) => {
-        console.log("Add Image: " + event.target.value)
+        let imageInputUrl = document.getElementById("imageURLForm").value;
+        console.log(imageInputUrl);
+        if(!this.checkImageURL(imageInputUrl)) return;
+        let newimage = {url: imageInputUrl, x: 10, y: 10};
+        let temp = _.cloneDeep(this.state.renderImages);
+        temp.push(newimage);
+        document.getElementById("imageURLForm").value = "";
+        this.changeflag = true;
+        this.setState({renderTexts: this.state.renderTexts,renderBackgroundColor: this.state.renderBackgroundColor,
+            renderBorderColor: this.state.renderBorderColor, renderBorderWidth: this.state.renderBorderWidth, renderBorderRadius: this.state.renderBorderRadius,
+            renderPadding: this.state.renderPadding, renderMargin: this.state.renderMargin, renderImages: temp, 
+            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText});
     }
 
-    checkImageURL = (event) => {
-        let url = event.target.value;
-        if (url.match(/\.(jpeg|jpg|gif|png)$/) != null) {
-            this.handleAddImage(event);
-        }
+    checkImageURL = (url) => {
+         return (url.match(/\.(jpeg|jpg|gif|png)$/) != null);
     }
 
     handleAddText = () => {
@@ -239,7 +247,7 @@ class EditLogoScreen extends Component {
         this.setState({renderTexts: temp,renderBackgroundColor: this.state.renderBackgroundColor,
             renderBorderColor: this.state.renderBorderColor, renderBorderWidth: this.state.renderBorderWidth, renderBorderRadius: this.state.renderBorderRadius,
             renderPadding: this.state.renderPadding, renderMargin: this.state.renderMargin,
-            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: newNumtext, numText: newNumtext});
+            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: newNumtext, numText: newNumtext, renderImages: this.state.renderImages});
     }
 
     handleDeleteText = () => {
@@ -250,7 +258,7 @@ class EditLogoScreen extends Component {
         this.setState({renderTexts: temp,renderBackgroundColor: this.state.renderBackgroundColor,
             renderBorderColor: this.state.renderBorderColor, renderBorderWidth: this.state.renderBorderWidth, renderBorderRadius: this.state.renderBorderRadius,
             renderPadding: this.state.renderPadding, renderMargin: this.state.renderMargin,
-            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: newNumtext, numText: newNumtext});
+            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: newNumtext, numText: newNumtext, renderImages: this.state.renderImages});
     }
 
     renderTextLinks = (text, index) => {
@@ -258,6 +266,13 @@ class EditLogoScreen extends Component {
         <Rnd key={index} bounds="parent" onDragStop={(event,data) => this.handleFocusChange(event,data,index)} enableResizing="Disable"
             style={{fontSize: this.state.renderTexts[index].fontSize + "pt", color: this.state.renderTexts[index].color}}
             position={{x: this.state.renderTexts[index].x, y: this.state.renderTexts[index].y}}>{text ? text.text : ":("}</Rnd>
+        )
+    }
+
+    renderImagesSpaces = (image, index) => {
+        return (
+        <Rnd key={index} bounds="parent"
+            position={{x: image.x, y: image.y}}><img src={image.url} alt={"whoops"}></img></Rnd>
         )
     }
  
@@ -272,8 +287,11 @@ class EditLogoScreen extends Component {
                     borderWidth: this.state.renderBorderWidth + "pt",
                     borderRadius: this.state.renderBorderRadius + "pt",
                     padding: this.state.renderPadding + "pt",
-                    margin: this.state.renderMargin + "pt"
-                }}>{this.state.renderTexts ? this.state.renderTexts.map(this.renderTextLinks): ""}</span>
+                    margin: this.state.renderMargin + "pt",
+                    height: this.state.renderHeight + "pt",
+                    width: this.state.renderWidth + "pt"
+                }}>{this.state.renderTexts ? this.state.renderTexts.map(this.renderTextLinks): ""}
+                    {this.state.renderImages ? this.state.renderImages.map(this.renderImagesSpaces): ""}</span>
             </div>
         )
     }
@@ -290,6 +308,7 @@ class EditLogoScreen extends Component {
                         let cleandata = filter(GET_LOGO, data);
                         this.state = {
                             renderTexts: _.cloneDeep(cleandata.logo.texts),
+                            renderImages: _.cloneDeep(cleandata.logo.images ? cleandata.logo.images : []),
                             renderBackgroundColor: cleandata.logo.backgroundColor,
                             renderBorderColor: cleandata.logo.borderColor,
                             renderBorderWidth: cleandata.logo.borderWidth,
@@ -345,7 +364,7 @@ class EditLogoScreen extends Component {
                                                 </div>
                                                 <div className="form-group col-8">
                                                     <label htmlFor="margin">Image:</label>
-                                                    <input type="text" className="form-control" name="image" ref={node => {
+                                                    <input type="text" id="imageURLForm" className="form-control" name="image" ref={node => {
                                                         images = node;
                                                     }} placeholder={"Image"} />
                                                 </div>
