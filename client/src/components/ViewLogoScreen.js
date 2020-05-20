@@ -4,6 +4,7 @@ import '../App.css';
 import gql from 'graphql-tag';
 import { Query, Mutation } from 'react-apollo';
 import {Rnd} from 'react-rnd';
+import htmlToImage from 'html-to-image';
 
 const GET_LOGO = gql`
     query logo($logoId: String) {
@@ -39,6 +40,16 @@ const DELETE_LOGO = gql`
 
 class ViewLogoScreen extends Component {
 
+    handleExport = (event) => {
+        htmlToImage.toJpeg(document.getElementById("workspace"), { quality: 0.95 })
+            .then(function (dataUrl) {
+                var link = document.createElement('a');
+                link.download = 'myLogo.jpeg';
+                link.href = dataUrl;
+                link.click();
+            });
+    }
+
     renderTextLinks = (text, index) => {
         console.log(text);
         return (
@@ -50,7 +61,7 @@ class ViewLogoScreen extends Component {
  
     renderWorkspace = (data) => {
         return (
-            <div className="col-6">
+            <div className="col-6" id="workspace">
                 <span style={{
                     display: "inline-block",
                     backgroundColor: data.logo.backgroundColor,
@@ -102,6 +113,7 @@ class ViewLogoScreen extends Component {
                                             <dd>{data.logo.width}</dd>
                                             <dt>Last Updated:</dt>
                                             <dd>{data.logo.lastUpdate}</dd>
+                                            <button type="button" onClick={this.handleExport}>Export</button>
                                         </dl>
                                         <Mutation mutation={DELETE_LOGO} key={data.logo._id} onCompleted={() => this.props.history.push('/')}>
                                         {(removeLogo, { loading, error }) => (

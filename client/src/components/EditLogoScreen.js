@@ -6,6 +6,7 @@ import { clamp } from "../utils/utlity";
 import {Rnd} from 'react-rnd';
 import { filter } from 'graphql-anywhere';
 import update from 'immutability-helper';
+import htmlToImage from 'html-to-image';
 var _ = require('lodash');
 
 const GET_LOGO = gql`
@@ -18,6 +19,11 @@ const GET_LOGO = gql`
                 y
                 color
                 fontSize
+            }
+            imageURL {
+                url
+                x
+                y
             }
             backgroundColor
             borderColor
@@ -67,6 +73,7 @@ class EditLogoScreen extends Component {
         this.changeflag = true;
         this.setState({
             renderTexts: _.cloneDeep(cleandata.logo.texts),
+            renderImages: _.cloneDeep(cleandata.logo.images),
             renderBackgroundColor: cleandata.logo.backgroundColor,
             renderBorderColor: cleandata.logo.borderColor,
             renderBorderWidth: cleandata.logo.borderWidth,
@@ -93,7 +100,7 @@ class EditLogoScreen extends Component {
         this.setState({renderTexts: temp, renderBackgroundColor: this.state.renderBackgroundColor,
             renderBorderColor: this.state.renderBorderColor, renderBorderWidth: this.state.renderBorderWidth, renderBorderRadius: this.state.renderBorderRadius,
             renderPadding: this.state.renderPadding, renderMargin: this.state.renderMargin,
-            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: index, numText: this.state.numText});
+            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: index, numText: this.state.numText, renderImages: this.state.renderImages});
     }
 
     handleTextChange = (event) => {
@@ -104,7 +111,7 @@ class EditLogoScreen extends Component {
         this.setState({renderTexts: temp, renderBackgroundColor: this.state.renderBackgroundColor,
             renderBorderColor: this.state.renderBorderColor, renderBorderWidth: this.state.renderBorderWidth, renderBorderRadius: this.state.renderBorderRadius,
             renderPadding: this.state.renderPadding, renderMargin: this.state.renderMargin,
-            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText});
+            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText, renderImages: this.state.renderImages});
     }
 
     handleColorChange = (event) => {
@@ -117,7 +124,7 @@ class EditLogoScreen extends Component {
         this.setState({renderTexts: temp, renderBackgroundColor: this.state.renderBackgroundColor,
             renderBorderColor: this.state.renderBorderColor, renderBorderWidth: this.state.renderBorderWidth, renderBorderRadius: this.state.renderBorderRadius,
             renderPadding: this.state.renderPadding, renderMargin: this.state.renderMargin,
-            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText});
+            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText, renderImages: this.state.renderImages});
     }
 
     handleBorderColorChange = (event) => {
@@ -126,7 +133,7 @@ class EditLogoScreen extends Component {
         this.setState({renderTexts: this.state.renderTexts,renderBackgroundColor: this.state.renderBackgroundColor,
             renderBorderColor: borderColor.value, renderBorderWidth: this.state.renderBorderWidth, renderBorderRadius: this.state.renderBorderRadius,
             renderPadding: this.state.renderPadding, renderMargin: this.state.renderMargin,
-            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText});
+            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText, renderImages: this.state.renderImages});
     }
 
     handleBackgroundColorChange = (event) => {
@@ -135,7 +142,7 @@ class EditLogoScreen extends Component {
         this.setState({renderTexts: this.state.renderTexts,renderBackgroundColor: backgroundColor.value,
             renderBorderColor: this.state.renderBorderColor, renderBorderWidth: this.state.renderBorderWidth, renderBorderRadius: this.state.renderBorderRadius,
             renderPadding: this.state.renderPadding, renderMargin: this.state.renderMargin,
-            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText});
+            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText, renderImages: this.state.renderImages});
     }
 
     handleFontSizeChange = (event) => {
@@ -147,7 +154,7 @@ class EditLogoScreen extends Component {
         this.setState({renderTexts: temp, renderBackgroundColor: this.state.renderBackgroundColor,
             renderBorderColor: this.state.renderBorderColor, renderBorderWidth: this.state.renderBorderWidth, renderBorderRadius: this.state.renderBorderRadius, 
             renderPadding: this.state.renderPadding, renderMargin: this.state.renderMargin,
-            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText});
+            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText, renderImages: this.state.renderImages});
     }
 
     handleBorderWidthChange = (event) => {
@@ -155,7 +162,7 @@ class EditLogoScreen extends Component {
         this.setState({renderTexts: this.state.renderTexts,renderBackgroundColor: this.state.renderBackgroundColor,
             renderBorderColor: this.state.renderBorderColor, renderBorderWidth: borderWidth.value, renderBorderRadius: this.state.renderBorderRadius,
             renderPadding: this.state.renderPadding, renderMargin: this.state.renderMargin,
-            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText});
+            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText, renderImages: this.state.renderImages});
     }
 
     handleBorderRadiusChange = (event) => {
@@ -164,7 +171,7 @@ class EditLogoScreen extends Component {
         this.setState({renderTexts: this.state.renderTexts,renderBackgroundColor: this.state.renderBackgroundColor,
             renderBorderColor: this.state.renderBorderColor, renderBorderWidth: this.state.renderBorderWidth, renderBorderRadius: borderRadius.value,
             renderPadding: this.state.renderPadding, renderMargin: this.state.renderMargin,
-            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText});
+            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText, renderImages: this.state.renderImages});
     }
 
     handlePaddingChange = (event) => {
@@ -173,7 +180,7 @@ class EditLogoScreen extends Component {
         this.setState({renderTexts: this.state.renderTexts,renderBackgroundColor: this.state.renderBackgroundColor,
             renderBorderColor: this.state.renderBorderColor, renderBorderWidth: this.state.renderBorderWidth, renderBorderRadius: this.state.renderBorderRadius,
             renderPadding: padding.value, renderMargin: this.state.renderMargin,
-            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText});
+            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText, renderImages: this.state.renderImages});
     }
 
     handleMarginChange = (event) => {
@@ -182,7 +189,7 @@ class EditLogoScreen extends Component {
         this.setState({renderTexts: this.state.renderTexts,renderBackgroundColor: this.state.renderBackgroundColor,
             renderBorderColor: this.state.renderBorderColor, renderBorderWidth: this.state.renderBorderWidth, renderBorderRadius: this.state.renderBorderRadius,
             renderFontSize: this.state.renderFontSize, renderPadding: this.state.renderPadding, renderMargin: margin.value,
-            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText});
+            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText, renderImages: this.state.renderImages});
     }
 
     handleWidthChange = (event) => {
@@ -191,7 +198,7 @@ class EditLogoScreen extends Component {
         this.setState({renderTexts: this.state.renderTexts,renderBackgroundColor: this.state.renderBackgroundColor,
             renderBorderColor: this.state.renderBorderColor, renderBorderWidth: this.state.renderBorderWidth, renderBorderRadius: this.state.renderBorderRadius,
             renderPadding: this.state.renderPadding, renderMargin: this.state.renderMargin,
-            renderHeight: this.state.renderHeight, renderWidth: width.value, focus: this.state.focus, numText: this.state.numText});
+            renderHeight: this.state.renderHeight, renderWidth: width.value, focus: this.state.focus, numText: this.state.numText, renderImages: this.state.renderImages});
     }
 
     handleHeightChange = (event) => {
@@ -200,7 +207,7 @@ class EditLogoScreen extends Component {
         this.setState({renderTexts: this.state.renderTexts,renderBackgroundColor: this.state.renderBackgroundColor,
             renderBorderColor: this.state.renderBorderColor, renderBorderWidth: this.state.renderBorderWidth, renderBorderRadius: this.state.renderBorderRadius,
             renderPadding: this.state.renderPadding, renderMargin: this.state.renderMargin,
-            renderHeight: height.value, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText});
+            renderHeight: height.value, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText, renderImages: this.state.renderImages});
     }
     
     handleMarginChange = (event) => {
@@ -209,7 +216,18 @@ class EditLogoScreen extends Component {
         this.setState({renderTexts: this.state.renderTexts,renderBackgroundColor: this.state.renderBackgroundColor,
             renderBorderColor: this.state.renderBorderColor, renderBorderWidth: this.state.renderBorderWidth, renderBorderRadius: this.state.renderBorderRadius,
             renderPadding: this.state.renderPadding, renderMargin: margin.value,
-            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText});
+            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText, renderImages: this.state.renderImages});
+    }
+
+    handleAddImage = (event) => {
+        console.log("Add Image: " + event.target.value)
+    }
+
+    checkImageURL = (event) => {
+        let url = event.target.value;
+        if (url.match(/\.(jpeg|jpg|gif|png)$/) != null) {
+            this.handleAddImage(event);
+        }
     }
 
     handleAddText = () => {
@@ -245,7 +263,7 @@ class EditLogoScreen extends Component {
  
     renderWorkspace = () => {
         return (
-            <div className="col-6">
+            <div className="col-6" id="workspace">
                 <span style={{
                     display: "inline-block",
                     backgroundColor: this.state.renderBackgroundColor,
@@ -261,7 +279,7 @@ class EditLogoScreen extends Component {
     }
 
     render() {
-        let texts, color, fontSize, backgroundColor, borderColor, borderWidth, borderRadius, padding, margin, height, width;
+        let texts, color, fontSize, backgroundColor, borderColor, borderWidth, borderRadius, padding, margin, height, width, images;
 
         return (
             <Query query={GET_LOGO} variables={{ logoId: this.props.match.params.id }}>
@@ -324,6 +342,12 @@ class EditLogoScreen extends Component {
                                                     <input type="text" className="form-control" name="text" ref={node => {
                                                         texts = node;
                                                     }} onChange={this.handleTextChange} placeholder={this.state.renderTexts[this.state.focus].text ? this.state.renderTexts[this.state.focus].text : "Text"} />
+                                                </div>
+                                                <div className="form-group col-8">
+                                                    <label htmlFor="margin">Image:</label>
+                                                    <input type="text" className="form-control" name="image" ref={node => {
+                                                        images = node;
+                                                    }} placeholder={"Image"} />
                                                 </div>
                                                 <div className="form-group col-4">
                                                     <label htmlFor="color">Color:</label>
@@ -388,7 +412,7 @@ class EditLogoScreen extends Component {
                                                 </div>
                                                 <button type="button" onClick={this.handleAddText}>Add Text</button>
                                                 <button type="button" onClick={this.handleDeleteText}>Delete Text</button>
-                                                <button type="button">Add Image</button>
+                                                <button type="button" onClick={this.handleAddImage}>Add Image</button>
                                                 <button type="submit" className="btn btn-success">Submit</button>
                                             </form>
                                             {this.renderWorkspace()}      
