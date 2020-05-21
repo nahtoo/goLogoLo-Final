@@ -1,108 +1,103 @@
-## Some useful queries for GraphiQL
+## Adding New Logo
 
-Get all information about all logos:
-
-    query getAllLogos{
-        logos{
-            _id
-            text
-            color
-            fontSize
-            backgroundColor
-            borderColor
-            borderWidth
-            borderRadius
-            padding
-            margin
-            lastUpdate
-        }
+```graphql
+mutation {
+  addLogo(texts: [{text: "Text0", x: 10, y: 10, fontSize: 10, color: "#000000"}], backgroundColor: "#ffec08", 
+    borderColor: "#ffec08", borderWidth: 13, borderRadius: 3, height: 10, width: 10,
+    padding: 13, margin: 10, imageURL: [{url: "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg", x: 10, y:10, width: 90, height: 100}]) {
+    texts {
+      text
     }
+  }
+}
+```
 
-Get one logo using its ID:
 
-    query getOneLogoById{
-        logo(id:"----INSERT ID HERE----"){
-            _id
-            text
-            color
-            fontSize
-            backgroundColor
-            borderColor
-            borderWidth
-            borderRadius
-            padding
-            margin
-            lastUpdate
-        }
+## Deleting a Logo
+
+```graphql
+mutation {
+  removeLogo(id: "5e8e7f242c3d9614d53807c3") {
+    _id
+    texts {
+      text
     }
+  }
+}
+```
 
-Create a new logo:
+## Updating a Logo
 
-    mutation AddLogo{
-        addLogo(
-            text: "New Logo",
-            color: "#000000",
-            fontSize: 12,
-            backgroundColor: "#FFFFFF",
-            borderColor: "#000000",
-            borderWidth: 12,
-            borderRadius: 12,
-            padding: 12,
-            margin: 12) {
-            _id
-        }
+```graphql
+mutation {
+  updateLogo(id: "5ec17d90a893c64c7da0fba7", texts: [{text: "Text0", x: 10, y: 10, fontSize: 10, color: "#000000"}], backgroundColor: "#ffec08", 
+    borderColor: "#ffec08", borderWidth: 13, borderRadius: 3, height: 10, width: 10,
+    padding: 13, margin: 10, imageURL: [{url: "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg", x: 10, y:10, width: 90, height: 100}]) {
+    texts {
+      text
     }
+  }
+}
+```
 
-Edit an existing logo:
+## Querying for All Logos
 
-    mutation updateLogo{
-            updateLogo(
-                id: "----ID OF LOGO TO UPDATE----",
-                text: "NEW TEXT",
-                color: "#000000",
-                fontSize: 12,
-                backgroundColor: "#FFFFFF",
-                borderColor: "#000000",
-                borderWidth: 12,
-                borderRadius: 12,
-                padding: 12,
-                margin: 12) {
-                    lastUpdate
-            }
+```graphql
+{
+  logos {
+    texts {
+      text
+      fontSize
+      color
+      x
+      y
     }
-
-Get all logos with a text:
-
-    {
-        getLogoByText(text: "----LOGO TEXT FRAGMENT----"){
-            _id
-            text
-            color
-            fontSize
-            backgroundColor
-            borderColor
-            borderWidth
-            borderRadius
-            padding
-            margin
-            lastUpdate
-        }
+    imageURL{
+      url
+      x
+      y
+      width
+      height
     }
+    borderColor
+    backgroundColor
+    borderWidth
+    borderRadius
+    height
+    width
+    padding
+    margin
+  }
+}
+```
 
-Get a logos with a text that contains:
+## Querying for Specific Logo
 
-    {
-        getLogosByTextContains(text: "----LOGO TEXT FRAGMENT----"){
-            _id
-            text
-            color
-            fontSize
-            backgroundColor
-            borderColor
-            borderWidth
-            borderRadius
-            padding
-            margin
-            lastUpdate
-        }
+```graphql
+{
+  logo(id:"5ec17d90a893c64c7da0fba7") {
+    texts {
+      text
+      fontSize
+      color
+      x
+      y
     }
+    imageURL{
+      url
+      x
+      y
+      width
+      height
+    }
+    borderColor
+    backgroundColor
+    borderWidth
+    borderRadius
+    height
+    width
+    padding
+    margin
+  }
+}
+```
