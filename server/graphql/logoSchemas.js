@@ -66,6 +66,12 @@ var imageURLType = new GraphQLObjectType({
             },
             y: {
                 type: GraphQLInt
+            },
+            width: {
+                type: GraphQLInt
+            },
+            height: {
+                type: GraphQLInt
             }
         }
     }
@@ -82,6 +88,12 @@ var imageURLInputType = new GraphQLInputObjectType({
                 type: GraphQLInt
             },
             y: {
+                type: GraphQLInt
+            },
+            width: {
+                type: GraphQLInt
+            },
+            height: {
                 type: GraphQLInt
             }
         }
@@ -290,7 +302,8 @@ var mutation = new GraphQLObjectType({
                         { texts: params.texts,
                             backgroundColor : params.backgroundColor, borderColor : params.borderColor,
                             borderWidth: params.borderWidth, borderRadius: params.borderRadius,
-                            padding: params.padding, margin: params.margin, lastUpdate: new Date(), height: params.height, width: params.width }, function (err) {
+                            padding: params.padding, margin: params.margin, lastUpdate: new Date(), height: params.height, width: params.width, 
+                            imageURL: params.imageURL}, function (err) {
                         if (err) return next(err);
                     });
                 }

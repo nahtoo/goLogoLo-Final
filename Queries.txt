@@ -3,7 +3,7 @@ Adding New Logo
 mutation {
   addLogo(text: ["test"], color: "black", backgroundColor: "black", 
     borderColor: "black", fontSize: 12, borderWidth: 13, borderRadius: 3, 
-    padding: 13, margin: 10, imageURL: "https://media.giphy.com/media/3osBLA53AVzn746dXi/giphy.gif") {
+    padding: 13, margin: 10, imageURL: "https://www.publicdomainpictures.net/pictures/280000/velka/not-found-image-15383864787lu.jpg") {
     text
   }
 }

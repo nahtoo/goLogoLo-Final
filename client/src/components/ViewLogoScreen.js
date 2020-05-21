@@ -17,6 +17,13 @@ const GET_LOGO = gql`
                 color
                 fontSize
             }
+            imageURL {
+                url
+                x
+                y
+                width
+                height
+            }
             backgroundColor
             borderColor
             borderWidth
@@ -58,6 +65,16 @@ class ViewLogoScreen extends Component {
             position={{x: text.x, y: text.y}}>{text ? text.text : ":("}</Rnd>
         )
     }
+
+    renderImagesSpaces = (image, index) => {
+        console.log(image);
+        return (
+        <Rnd key={index} bounds="parent"
+            position={{x: image.x, y: image.y}} size={{width: image.width + "px", height: image.height + "px"}}
+            onResizeStop={(event, direction, ref) => this.handleResizeImage(event,ref,index)}
+            onDragStop={(event,data) => this.handleMoveImage(event,data,index)}><img src={image.url} alt={"whoops"} style={{maxWidth: "100%", maxHeight: "100%"}}></img></Rnd>
+        )
+    }
  
     renderWorkspace = (data) => {
         return (
@@ -71,7 +88,8 @@ class ViewLogoScreen extends Component {
                     borderRadius: data.logo.borderRadius + "pt",
                     padding: data.logo.padding + "pt",
                     margin: data.logo.margin + "pt"
-                }}>{data.logo.texts ? data.logo.texts.map(this.renderTextLinks): ""}</span>
+                }}>{data.logo.texts ? data.logo.texts.map(this.renderTextLinks): ""}
+                    {data.logo.imageURL ? data.logo.imageURL.map(this.renderImagesSpaces): ":("}</span>
             </div>
         )
     }

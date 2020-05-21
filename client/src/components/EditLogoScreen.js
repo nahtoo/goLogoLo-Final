@@ -24,6 +24,8 @@ const GET_LOGO = gql`
                 url
                 x
                 y
+                width
+                height
             }
             backgroundColor
             borderColor
@@ -42,6 +44,7 @@ const UPDATE_LOGO = gql`
     mutation updateLogo(
         $id: String!,
         $texts: [textInput],
+        $imageURL: [imageURLInput]
         $backgroundColor: String!,
         $borderColor: String!,
         $borderWidth: Int!,
@@ -52,7 +55,8 @@ const UPDATE_LOGO = gql`
         $width: Int!) {
             updateLogo(
                 id: $id,
-                texts: $texts
+                texts: $texts,
+                imageURL: $imageURL
                 backgroundColor: $backgroundColor,
                 borderColor: $borderColor,
                 borderWidth: $borderWidth,
@@ -223,7 +227,7 @@ class EditLogoScreen extends Component {
         let imageInputUrl = document.getElementById("imageURLForm").value;
         console.log(imageInputUrl);
         if(!this.checkImageURL(imageInputUrl)) return;
-        let newimage = {url: imageInputUrl, x: 10, y: 10};
+        let newimage = {url: imageInputUrl, x: 10, y: 10, width: 10, height: 10};
         let temp = _.cloneDeep(this.state.renderImages);
         temp.push(newimage);
         document.getElementById("imageURLForm").value = "";
@@ -261,6 +265,29 @@ class EditLogoScreen extends Component {
             renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: newNumtext, numText: newNumtext, renderImages: this.state.renderImages});
     }
 
+    handleResizeImage = (event, ref, index) => {
+        let temp = _.cloneDeep(this.state.renderImages);
+        temp[index].width = parseInt(ref.style.width, 10);
+        temp[index].height = parseInt(ref.style.height, 10);
+        this.changeflag = true;
+        console.log("Change size to: " + temp[index].width + "x" + temp[index].height)
+        this.setState({renderTexts: this.state.renderTexts, renderBackgroundColor: this.state.renderBackgroundColor,
+            renderBorderColor: this.state.renderBorderColor, renderBorderWidth: this.state.renderBorderWidth, renderBorderRadius: this.state.renderBorderRadius,
+            renderPadding: this.state.renderPadding, renderMargin: this.state.renderMargin,
+            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText, renderImages: temp});
+    }
+
+    handleMoveImage = (event, data, index) => {
+        let temp = _.cloneDeep(this.state.renderImages);
+        temp[index].x = data.x;
+        temp[index].y = data.y;
+        this.changeflag = true;
+        this.setState({renderTexts: this.state.renderTexts, renderBackgroundColor: this.state.renderBackgroundColor,
+            renderBorderColor: this.state.renderBorderColor, renderBorderWidth: this.state.renderBorderWidth, renderBorderRadius: this.state.renderBorderRadius,
+            renderPadding: this.state.renderPadding, renderMargin: this.state.renderMargin,
+            renderHeight: this.state.renderHeight, renderWidth: this.state.renderWidth, focus: this.state.focus, numText: this.state.numText, renderImages: temp});
+    }
+
     renderTextLinks = (text, index) => {
         return (
         <Rnd key={index} bounds="parent" onDragStop={(event,data) => this.handleFocusChange(event,data,index)} enableResizing="Disable"
@@ -270,9 +297,12 @@ class EditLogoScreen extends Component {
     }
 
     renderImagesSpaces = (image, index) => {
+        console.log(image);
         return (
         <Rnd key={index} bounds="parent"
-            position={{x: image.x, y: image.y}}><img src={image.url} alt={"whoops"}></img></Rnd>
+            position={{x: image.x, y: image.y}} size={{width: image.width + "px", height: image.height + "px"}}
+            onResizeStop={(event, direction, ref) => this.handleResizeImage(event,ref,index)}
+            onDragStop={(event,data) => this.handleMoveImage(event,data,index)}><img src={image.url} alt={"whoops"} style={{maxWidth: "100%", maxHeight: "100%"}}></img></Rnd>
         )
     }
  
@@ -334,12 +364,8 @@ class EditLogoScreen extends Component {
                                         </div>
                                         <div className="panel-body row">                                            
                                             <form className="col-6" onSubmit={e => {
-                                                console.log(this.state.renderTexts);
-                                                console.log(data.logo.texts);
                                                 e.preventDefault();
-                                                console.log(this.state.renderTexts);
-                                                console.log(data.logo.texts);
-                                                updateLogo({ variables: { id: data.logo._id, texts: this.state.renderTexts,
+                                                updateLogo({ variables: { id: data.logo._id, texts: this.state.renderTexts, imageURL: this.state.renderImages,
                                                     backgroundColor: this.state.renderBackgroundColor, borderColor: this.state.renderBorderColor,
                                                     borderWidth: parseInt(this.state.renderBorderWidth), borderRadius: parseInt(this.state.renderBorderRadius),
                                                     padding: parseInt(this.state.renderPadding), margin: parseInt(this.state.renderMargin), height: parseInt(this.state.renderHeight),
