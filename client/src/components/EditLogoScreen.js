@@ -338,7 +338,7 @@ class EditLogoScreen extends Component {
                         let cleandata = filter(GET_LOGO, data);
                         this.state = {
                             renderTexts: _.cloneDeep(cleandata.logo.texts),
-                            renderImages: _.cloneDeep(cleandata.logo.images ? cleandata.logo.images : []),
+                            renderImages: _.cloneDeep(cleandata.logo.imageURL ? cleandata.logo.imageURL : []),
                             renderBackgroundColor: cleandata.logo.backgroundColor,
                             renderBorderColor: cleandata.logo.borderColor,
                             renderBorderWidth: cleandata.logo.borderWidth,
